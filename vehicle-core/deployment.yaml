@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vehicle-core-deployment
+  namespace: vehicle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vehicle-core-app
+  template:
+    metadata:
+      name: vehicle-core-pod
+      labels:
+        app: vehicle-core-app
+    spec:
+      containers:
+        - name: vehicle-core-container
+          image: shiyas9961/vehicle-fast-api:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-Secret
+                  key: POSTGRES_USER
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-Secret
+                  key: POSTGRES_PASSWORD
+
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-Secret
+                  key: POSTGRES_DB
+
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: vehicle-config
+                  key: POSTGRES_HOST
+
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: vehicle-config
+                  key: POSTGRES_PORT
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3

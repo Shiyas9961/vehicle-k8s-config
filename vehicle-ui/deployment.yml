@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vehicle-ui-deployment
+  namespace: vehicle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vehicle-ui-app
+  template:
+    metadata:
+      name: vehicle-ui-pod
+      labels:
+        app: vehicle-ui-app
+    spec:
+      containers:
+        - name: vehicle-ui-container
+          image: shiyas9961/vehicle-frontend:latest
+          ports:
+            - containerPort: 80
