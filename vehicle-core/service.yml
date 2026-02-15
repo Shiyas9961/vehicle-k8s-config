@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: vehicle-service
+  name: vehicle-core-service
   namespace: vehicle
 spec:
   selector:
